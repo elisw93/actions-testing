@@ -1,0 +1,38 @@
+on: push
+
+jobs:
+  check-freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: npm install js-yaml
+      - uses: actions/github-script@v6
+        id: freeze-check
+        with:
+          result-encoding: string
+          script: |
+            const fs = require("fs").promises;
+            const yamlParse = require("js-yaml").load;
+
+            const now = Date.now();
+            const freezefile = "freeze.yaml";
+            const freezes = yamlParse(await fs.readFile(freezefile)).map((freeze) =>
+              Object({
+                ...freeze,
+                start: Date.parse(freeze["start"]),
+                end: Date.parse(freeze["end"]),
+              })
+            );
+
+            const currentFreezes = freezes.filter(
+              (freeze) => now > freeze["start"] && now < freeze["end"]
+            );
+            if (currentFreezes.length > 0) {
+              return "In a freeze";
+            }
+            return "Not in a freeze";
+      - name: Get result
+        run: echo "${{steps.freeze-check.outputs.result}}"
