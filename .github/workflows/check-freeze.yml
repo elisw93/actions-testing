@@ -8,7 +8,7 @@ on:
 jobs:
   check-freeze:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.base.ref == "devel" }}
+    if: ${{ github.event.pull_request.base.ref == 'devel' }}
     steps:
       - uses: actions/github-script@v6
         id: freeze-check
