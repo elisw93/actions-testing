@@ -2,6 +2,8 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
+      - synchronize
       - edited
       - ready_for_review
 
@@ -35,7 +37,7 @@ jobs:
             );
             if (currentFreezes.length > 0) {
               const freeze = currentFreezes[0];
-              core.error(
+              core.setFailed(
                 "We are currently in a freeze from " +
                   `${freeze["start"].toString()} to ${freeze["end"].toString()}`
               );
