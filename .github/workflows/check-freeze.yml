@@ -23,7 +23,7 @@ jobs:
           result-encoding: string
           script: |
             const fs = require("fs").promises;
-            const dtFormat = (dt) => Date(dt).toString();
+            const dtFormat = (dt) => new Date(dt).toString();
 
             const now = Date.now();
             const freezefile = "freeze.json";
@@ -42,10 +42,10 @@ jobs:
               const freeze = currentFreezes[0];
               core.setFailed(
                 "We are currently in a freeze of devel:\n" +
+                  "*** If you need to override this check, add the keyword HOTFIX to your PR description!!! ***" +
+                  "\n" +
                   `Start:  ${dtFormat(freeze["start"])}\n` +
                   `End:    ${dtFormat(freeze["end"])}\n` +
-                  `Reason: ${dtFormat(freeze["reason"])}\n` +
-                  "\n" +
-                  "*** If you need to override this check, add the keyword HOTFIX to your PR description!!! ***"
+                  `Reason: ${freeze["reason"]}\n`
               );
             }
