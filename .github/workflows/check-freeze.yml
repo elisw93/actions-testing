@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.ref == 'devel' }}
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: devel
       - uses: actions/github-script@v6
         id: freeze-check
         with:
