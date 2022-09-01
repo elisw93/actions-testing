@@ -1,3 +1,4 @@
+name: Check Freeze
 on:
   pull_request:
     types:
@@ -18,9 +19,7 @@ jobs:
         with:
           ref: devel
       - uses: actions/github-script@v6
-        id: freeze-check
         with:
-          result-encoding: string
           script: |
             const fs = require("fs").promises;
             const dtFormat = (dt) => new Date(dt).toString();
@@ -42,8 +41,7 @@ jobs:
               const freeze = currentFreezes[0];
               core.setFailed(
                 "We are currently in a freeze of devel:\n" +
-                  "*** If you need to override this check, add the keyword HOTFIX to your PR description!!! ***" +
-                  "\n" +
+                  "*** If you need to override this check, add the keyword HOTFIX to your PR description!!! ***\n" +
                   `Start:  ${dtFormat(freeze["start"])}\n` +
                   `End:    ${dtFormat(freeze["end"])}\n` +
                   `Reason: ${freeze["reason"]}\n`
