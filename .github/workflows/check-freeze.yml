@@ -15,35 +15,20 @@ jobs:
       github.event.pull_request.base.ref == 'devel'
       && ! contains(github.event.pull_request.body, 'HOTFIX')
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: devel
       - uses: actions/github-script@v6
         with:
           script: |
-            const fs = require("fs").promises;
-            const dtFormat = (dt) => new Date(dt).toString();
+            freezeIssues = await github.rest.issues.listForRepo({
+              ...context.repo,
+              state: "open",
+              labels: "@freeze",
+            });
 
-            const now = Date.now();
-            const freezefile = "freeze.json";
-            const freezes = JSON.parse(await fs.readFile(freezefile)).map((freeze) =>
-              Object({
-                ...freeze,
-                start: Date.parse(freeze["start"]),
-                end: Date.parse(freeze["end"]),
-              })
-            );
-
-            const currentFreezes = freezes.filter(
-              (freeze) => now > freeze["start"] && now < freeze["end"]
-            );
+            const currentFreezes = freezeIssues.data.map((issue) => issue.html_url);
             if (currentFreezes.length > 0) {
-              const freeze = currentFreezes[0];
               core.setFailed(
                 "We are currently in a freeze of devel:\n" +
                   "*** If you need to override this check, add the keyword HOTFIX to your PR description!!! ***\n" +
-                  `Start:  ${dtFormat(freeze["start"])}\n` +
-                  `End:    ${dtFormat(freeze["end"])}\n` +
-                  `Reason: ${freeze["reason"]}\n`
+                  currentFreezes.join("\n")
               );
             }
