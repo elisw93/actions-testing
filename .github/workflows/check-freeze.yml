@@ -18,7 +18,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            freezeIssues = github.rest.issues.listForRepo({
+            freezeIssues = await github.rest.issues.listForRepo({
               ...context.repo,
               state: "open",
               labels: "@freeze",
