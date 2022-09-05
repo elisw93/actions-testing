@@ -19,7 +19,7 @@ jobs:
         with:
           script: |
             freezeIssues = github.rest.issues.listForRepo({
-              ...context.repo(),
+              ...context.repo,
               state: "open",
               labels: "@freeze",
             });
