@@ -10,6 +10,3 @@ jobs:
   create-release:
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, github.base_ref)
     uses: ./.github/workflows/release_template.yaml
-    with:
-      version: "${GITHUB_HEAD_REF##*/}"
-    secrets: inherit
